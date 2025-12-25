@@ -5,7 +5,10 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist/aurora-e-shop/browser" }
+      "config": {
+        "distDir": "dist/aurora-e-shop/browser",
+        "installCommand": "npm install --legacy-peer-deps"
+      }
     }
   ],
   "installCommand": "npm install --legacy-peer-deps",
