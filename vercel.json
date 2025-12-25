@@ -3,7 +3,7 @@
   "framework": "angular",
   "buildCommand": "npm run build",
   "outputDirectory": "dist/aurora-e-shop/browser",
-  "installCommand": "npm install",
+  "installCommand": "npm install --legacy-peer-deps",
   "rewrites": [
     {
       "source": "/(.*)",
