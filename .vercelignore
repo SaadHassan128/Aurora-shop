@@ -13,13 +13,9 @@ README.md
 *.log
 .DS_Store
 Thumbs.db
-src/
-angular.json
-tsconfig*.json
 .prettierrc
 .eslintrc*
 .stylelintrc*
 jest.config.*
 karma.conf.*
 test.ts
-e2e/
