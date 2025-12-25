@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
+  <!-- Navbar -->
+  <app-header></app-header>
+
+  <div class="flex flex-1 pt-16">
+    <!-- Sidebar -->
+    <aside
+      class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block fixed h-full pt-4"
+    >
+      <nav class="p-4 space-y-2">
+        <div class="px-4 py-2 mb-4">
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Main</h2>
+        </div>
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="bg-primary/10 text-primary"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
+          Dashboard
+        </a>
+        <a
+          routerLink="/admin/orders"
+          routerLinkActive="bg-primary/10 text-primary"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon>
+          Orders
+        </a>
+        <a
+          routerLink="/admin/products"
+          routerLinkActive="bg-primary/10 text-primary"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <lucide-icon [img]="Package" [size]="20"></lucide-icon>
+          Products
+        </a>
+        <a
+          routerLink="/admin/users"
+          routerLinkActive="bg-primary/10 text-primary"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <lucide-icon [img]="Users" [size]="20"></lucide-icon>
+          Users
+        </a>
+        <a
+          routerLink="/admin/wishlist"
+          routerLinkActive="bg-primary/10 text-primary"
+          class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <lucide-icon [img]="Heart" [size]="20"></lucide-icon>
+          Wishlist Tracker
+        </a>
+
+        <div class="px-4 py-2 mt-8 mb-2">
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Settings</h2>
+        </div>
+        <button
+          (click)="logout()"
+          class="w-full flex items-center gap-3 px-4 py-3 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+        >
+          <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
+          Logout
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto md:ml-64">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

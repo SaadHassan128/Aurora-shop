@@ -1,0 +1,314 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+  <!-- Sticky Header with Glassmorphism -->
+  <div
+    class="sticky top-16 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 transition-colors duration-300 supports-[backdrop-filter]:bg-white/60"
+  >
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-primary/10 rounded-lg text-primary">
+            <lucide-icon [img]="ShoppingBag" [size]="24"></lucide-icon>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Collection</h1>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              {{ filteredProducts().length }} items found
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Mobile Filter Toggle -->
+          <button
+            (click)="toggleMobileFilters()"
+            class="lg:hidden flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <lucide-icon [img]="Filter" [size]="18"></lucide-icon>
+            <span class="text-sm font-medium">Filters</span>
+          </button>
+
+          <!-- Sort Dropdown -->
+          <div class="relative group">
+            <div
+              class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:border-primary/50 transition-all cursor-pointer relative"
+            >
+              <span class="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+              <select
+                [ngModel]="sortOption()"
+                (ngModelChange)="setSort($event)"
+                class="appearance-none bg-transparent border-none text-sm font-medium text-gray-900 dark:text-white focus:ring-0 cursor-pointer pr-8 pl-1"
+              >
+                <option value="default" class="text-gray-900 dark:text-black">Featured</option>
+                <option value="price-asc" class="text-gray-900 dark:text-black">
+                  Price: Low to High
+                </option>
+                <option value="price-desc" class="text-gray-900 dark:text-black">
+                  Price: High to Low
+                </option>
+                <option value="rating" class="text-gray-900 dark:text-black">Best Rating</option>
+              </select>
+              <lucide-icon
+                [img]="ChevronDown"
+                [size]="16"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              ></lucide-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8 relative">
+      <!-- Sidebar Filters (Desktop) -->
+      <aside class="hidden lg:block w-72 flex-shrink-0">
+        <div class="sticky top-36 space-y-6">
+          <!-- Search Card -->
+          <div
+            class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <h3
+              class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4"
+            >
+              Search
+            </h3>
+            <div class="relative group">
+              <lucide-icon
+                [img]="Search"
+                [size]="18"
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors"
+              ></lucide-icon>
+              <input
+                [ngModel]="searchQuery()"
+                (ngModelChange)="searchQuery.set($event)"
+                type="text"
+                placeholder="Find products..."
+                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Categories Card -->
+          <div
+            class="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <h3
+              class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4"
+            >
+              Categories
+            </h3>
+            <div class="space-y-1">
+              <button
+                (click)="setCategory(null)"
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 group cursor-pointer"
+                [ngClass]="
+                  selectedCategory() === null
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                "
+              >
+                <span class="text-sm font-medium">All Categories</span>
+                <lucide-icon
+                  *ngIf="selectedCategory() === null"
+                  [img]="Check"
+                  [size]="16"
+                ></lucide-icon>
+              </button>
+
+              <button
+                *ngFor="let cat of categories(); trackBy: trackByString.bind(this)"
+                (click)="setCategory(cat)"
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 group capitalize cursor-pointer"
+                [ngClass]="
+                  selectedCategory() === cat
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400'
+                "
+              >
+                <span class="text-sm font-medium">{{ cat }}</span>
+                <lucide-icon
+                  *ngIf="selectedCategory() === cat"
+                  [img]="Check"
+                  [size]="16"
+                ></lucide-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Banner Card -->
+          <div
+            class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-secondary p-6 text-white shadow-lg"
+          >
+            <div
+              class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/20 rounded-full blur-2xl"
+            ></div>
+            <div class="relative z-10">
+              <h3 class="text-lg font-bold mb-2">Summer Sale</h3>
+              <p class="text-sm text-white/90 mb-4">Get up to 50% off on selected items.</p>
+              <button
+                (click)="viewDeals()"
+                class="px-4 py-2 bg-white text-primary rounded-lg text-sm font-bold shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
+                View Deals
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile Filters Overlay -->
+      <div *ngIf="showMobileFilters()" class="fixed inset-0 z-50 lg:hidden">
+        <div
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          (click)="toggleMobileFilters()"
+        ></div>
+        <div
+          class="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl transform transition-transform duration-300 flex flex-col"
+        >
+          <div
+            class="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between"
+          >
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Filters</h2>
+            <button
+              (click)="toggleMobileFilters()"
+              class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500"
+            >
+              <lucide-icon [img]="X" [size]="24"></lucide-icon>
+            </button>
+          </div>
+
+          <div class="p-6 overflow-y-auto flex-1 space-y-8">
+            <!-- Mobile Search -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >Search</label
+              >
+              <div class="relative">
+                <lucide-icon
+                  [img]="Search"
+                  [size]="18"
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                ></lucide-icon>
+                <input
+                  [ngModel]="searchQuery()"
+                  (ngModelChange)="searchQuery.set($event)"
+                  type="text"
+                  placeholder="Search products..."
+                  class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                />
+              </div>
+            </div>
+
+            <!-- Mobile Categories -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >Categories</label
+              >
+              <div class="space-y-2">
+                <button
+                  (click)="setCategory(null)"
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all"
+                  [ngClass]="
+                    selectedCategory() === null
+                      ? 'bg-primary/5 border-primary text-primary'
+                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
+                  "
+                >
+                  <span class="font-medium">All Categories</span>
+                  <div
+                    class="w-4 h-4 rounded-full border border-current flex items-center justify-center"
+                  >
+                    <div
+                      *ngIf="selectedCategory() === null"
+                      class="w-2 h-2 rounded-full bg-current"
+                    ></div>
+                  </div>
+                </button>
+                <button
+                  *ngFor="let cat of categories(); trackBy: trackByString.bind(this)"
+                  (click)="setCategory(cat)"
+                  class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all capitalize"
+                  [ngClass]="
+                    selectedCategory() === cat
+                      ? 'bg-primary/5 border-primary text-primary'
+                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
+                  "
+                >
+                  <span class="font-medium">{{ cat }}</span>
+                  <div
+                    class="w-4 h-4 rounded-full border border-current flex items-center justify-center"
+                  >
+                    <div
+                      *ngIf="selectedCategory() === cat"
+                      class="w-2 h-2 rounded-full bg-current"
+                    ></div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50"
+          >
+            <button
+              (click)="toggleMobileFilters()"
+              class="w-full py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all"
+            >
+              View {{ filteredProducts().length }} Results
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <main class="flex-1">
+        <!-- Loading State -->
+        <div *ngIf="isLoading()" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          <app-product-card
+            *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8]; trackBy: trackByIndex"
+            [isLoading]="true"
+            class="h-full"
+          ></app-product-card>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          *ngIf="!isLoading() && filteredProducts().length === 0"
+          class="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <div
+            class="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-6"
+          >
+            <lucide-icon [img]="Search" [size]="40" class="text-gray-400"></lucide-icon>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No products found</h3>
+          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-8">
+            We couldn't find any products matching your search criteria. Try different keywords or
+            clear your filters.
+          </p>
+          <button
+            (click)="setCategory(null); searchQuery.set('')"
+            class="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all hover:-translate-y-1"
+          >
+            Clear All Filters
+          </button>
+        </div>
+
+        <!-- Products -->
+        <div
+          *ngIf="!isLoading() && filteredProducts().length > 0"
+          class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6"
+        >
+          <app-product-card
+            *ngFor="let product of filteredProducts()"
+            [product]="product"
+            (addToCart)="addToCart($event)"
+            class="h-full"
+          ></app-product-card>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

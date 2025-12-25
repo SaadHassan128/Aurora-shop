@@ -1,0 +1,530 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 pt-24 pb-12 transition-colors duration-300">
+  <div class="container mx-auto px-4">
+    <!-- Stepper -->
+    <div class="max-w-4xl mx-auto mb-12">
+      <div class="relative flex items-center justify-between w-full">
+        <div
+          class="absolute left-0 top-1/2 w-full h-1 bg-gray-200 dark:bg-gray-800 -z-10 rounded-full"
+        ></div>
+        <div
+          class="absolute left-0 top-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-500"
+          [style.width.%]="(currentStep() - 1) * 50"
+        ></div>
+
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-950 px-2">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+            [class.bg-primary]="currentStep() >= 1"
+            [class.border-primary]="currentStep() >= 1"
+            [class.text-white]="currentStep() >= 1"
+            [class.bg-white]="currentStep() < 1"
+            [class.dark:bg-gray-900]="currentStep() < 1"
+            [class.border-gray-300]="currentStep() < 1"
+            [class.dark:border-gray-700]="currentStep() < 1"
+          >
+            <lucide-icon [img]="currentStep() > 1 ? Check : Truck" [size]="20"></lucide-icon>
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-white">Shipping</span>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-950 px-2">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+            [class.bg-primary]="currentStep() >= 2"
+            [class.border-primary]="currentStep() >= 2"
+            [class.text-white]="currentStep() >= 2"
+            [class.bg-white]="currentStep() < 2"
+            [class.dark:bg-gray-900]="currentStep() < 2"
+            [class.border-gray-300]="currentStep() < 2"
+            [class.dark:border-gray-700]="currentStep() < 2"
+          >
+            <lucide-icon [img]="currentStep() > 2 ? Check : CreditCard" [size]="20"></lucide-icon>
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-white">Payment</span>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-950 px-2">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300"
+            [class.bg-primary]="currentStep() >= 3"
+            [class.border-primary]="currentStep() >= 3"
+            [class.text-white]="currentStep() >= 3"
+            [class.bg-white]="currentStep() < 3"
+            [class.dark:bg-gray-900]="currentStep() < 3"
+            [class.border-gray-300]="currentStep() < 3"
+            [class.dark:border-gray-700]="currentStep() < 3"
+          >
+            <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon>
+          </div>
+          <span class="text-sm font-medium text-gray-900 dark:text-white">Review</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <!-- Main Form Area -->
+      <div class="lg:col-span-2 space-y-6">
+        <form
+          [formGroup]="checkoutForm"
+          class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-300"
+        >
+          <!-- Step 1: Shipping -->
+          <div
+            *ngIf="currentStep() === 1"
+            class="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300"
+            formGroupName="shipping"
+          >
+            <h2
+              class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2"
+            >
+              <lucide-icon [img]="Truck" class="text-primary"></lucide-icon>
+              Shipping Address
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >First Name</label
+                >
+                <input
+                  type="text"
+                  formControlName="firstName"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="First name"
+                />
+                <p
+                  *ngIf="
+                    shippingGroup?.get('firstName')?.touched &&
+                    shippingGroup?.get('firstName')?.invalid
+                  "
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >Last Name</label
+                >
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="Last name"
+                />
+                <p
+                  *ngIf="
+                    shippingGroup?.get('lastName')?.touched &&
+                    shippingGroup?.get('lastName')?.invalid
+                  "
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                formControlName="email"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                placeholder="demo@example.com"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <input
+                type="text"
+                formControlName="address"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                placeholder="Your Address"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">City</label>
+                <select
+                  formControlName="city"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                >
+                  <option value="">Select City</option>
+                  <option *ngFor="let city of egyptCities" [value]="city">{{ city }}</option>
+                </select>
+                <p
+                  *ngIf="shippingGroup?.get('city')?.touched && shippingGroup?.get('city')?.invalid"
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Zip Code</label>
+                <input
+                  type="text"
+                  formControlName="zipCode"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="12345"
+                />
+                <p
+                  *ngIf="
+                    shippingGroup?.get('zipCode')?.touched && shippingGroup?.get('zipCode')?.invalid
+                  "
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
+              <input
+                type="text"
+                value="Egypt"
+                readonly
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Phone Number</label
+              >
+              <div class="flex gap-2">
+                <div
+                  class="w-20 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 flex items-center justify-center font-medium"
+                >
+                  +20
+                </div>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  class="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="1xxxxxxxxx"
+                />
+              </div>
+              <p
+                *ngIf="shippingGroup?.get('phone')?.touched && shippingGroup?.get('phone')?.invalid"
+                class="text-red-500 text-xs"
+              >
+                Required
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2: Payment -->
+          <div
+            *ngIf="currentStep() === 2"
+            class="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300"
+            formGroupName="payment"
+          >
+            <h2
+              class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2"
+            >
+              <lucide-icon [img]="CreditCard" class="text-primary"></lucide-icon>
+              Payment Details
+            </h2>
+
+            <div
+              class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl mb-6 flex items-start gap-3"
+            >
+              <lucide-icon
+                [img]="ShieldCheck"
+                class="text-blue-600 dark:text-blue-400 shrink-0 mt-1"
+              ></lucide-icon>
+              <div>
+                <h4 class="font-bold text-blue-900 dark:text-blue-300 text-sm">Secure Payment</h4>
+                <p class="text-blue-700 dark:text-blue-400 text-xs mt-1">
+                  Your payment information is encrypted and secure. We never store your full card
+                  details.
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Card Number</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  formControlName="cardNumber"
+                  (input)="formatCardNumber($event)"
+                  class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                />
+                <lucide-icon
+                  [img]="CreditCard"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  [size]="20"
+                ></lucide-icon>
+              </div>
+              <p
+                *ngIf="
+                  paymentGroup?.get('cardNumber')?.touched &&
+                  paymentGroup?.get('cardNumber')?.invalid
+                "
+                class="text-red-500 text-xs"
+              >
+                Card number required
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >Expiry Date</label
+                >
+                <input
+                  type="text"
+                  formControlName="expiry"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="MM/YY"
+                />
+                <p
+                  *ngIf="
+                    paymentGroup?.get('expiry')?.touched && paymentGroup?.get('expiry')?.invalid
+                  "
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">CVC</label>
+                <input
+                  type="text"
+                  formControlName="cvc"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  placeholder="123"
+                />
+                <p
+                  *ngIf="paymentGroup?.get('cvc')?.touched && paymentGroup?.get('cvc')?.invalid"
+                  class="text-red-500 text-xs"
+                >
+                  Required
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Cardholder Name</label
+              >
+              <input
+                type="text"
+                formControlName="cardHolder"
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                placeholder="Your Name"
+              />
+              <p
+                *ngIf="
+                  paymentGroup?.get('cardHolder')?.touched &&
+                  paymentGroup?.get('cardHolder')?.invalid
+                "
+                class="text-red-500 text-xs"
+              >
+                Required
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3: Review -->
+          <div
+            *ngIf="currentStep() === 3"
+            class="space-y-6 animate-in fade-in zoom-in duration-300"
+          >
+            <h2
+              class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2"
+            >
+              <lucide-icon [img]="ShoppingBag" class="text-primary"></lucide-icon>
+              Review Order
+            </h2>
+
+            <div
+              class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700"
+            >
+              <h3 class="font-bold text-gray-900 dark:text-white mb-4">Shipping Information</h3>
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400"
+              >
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">Name</p>
+                  <p>
+                    {{ shippingGroup?.get('firstName')?.value }}
+                    {{ shippingGroup?.get('lastName')?.value }}
+                  </p>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">Contact</p>
+                  <p>{{ shippingGroup?.get('email')?.value }}</p>
+                  <p>{{ shippingGroup?.get('phone')?.value }}</p>
+                </div>
+                <div class="md:col-span-2">
+                  <p class="font-medium text-gray-900 dark:text-white">Address</p>
+                  <p>{{ shippingGroup?.get('address')?.value }}</p>
+                  <p>
+                    {{ shippingGroup?.get('city')?.value }},
+                    {{ shippingGroup?.get('country')?.value }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700"
+            >
+              <h3 class="font-bold text-gray-900 dark:text-white mb-4">Payment Method</h3>
+              <div class="flex items-center gap-3">
+                <lucide-icon [img]="CreditCard" class="text-gray-500"></lucide-icon>
+                <span class="text-gray-900 dark:text-white"
+                  >Ending in {{ paymentGroup?.get('cardNumber')?.value | slice : -4 }}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div
+            class="flex items-center justify-between pt-8 border-t border-gray-100 dark:border-gray-800 mt-8"
+          >
+            <button
+              type="button"
+              (click)="prevStep()"
+              [disabled]="currentStep() === 1"
+              class="flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <lucide-icon [img]="ChevronLeft" [size]="20"></lucide-icon>
+              Back
+            </button>
+
+            <button
+              *ngIf="currentStep() < 3"
+              type="button"
+              (click)="nextStep()"
+              class="flex items-center gap-2 px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all shadow-lg shadow-slate-900/20"
+            >
+              Next Step
+              <lucide-icon [img]="ChevronRight" [size]="20"></lucide-icon>
+            </button>
+
+            <button
+              *ngIf="currentStep() === 3"
+              type="button"
+              (click)="placeOrder()"
+              [disabled]="isProcessing()"
+              class="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/30 active:scale-95 disabled:opacity-70 disabled:cursor-wait"
+            >
+              <lucide-icon *ngIf="!isProcessing()" [img]="Check" [size]="20"></lucide-icon>
+              <lucide-icon
+                *ngIf="isProcessing()"
+                [img]="Loader2"
+                [size]="20"
+                class="animate-spin"
+              ></lucide-icon>
+              {{ isProcessing() ? 'Processing...' : 'Place Order' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Order Summary Sidebar -->
+      <div class="lg:col-span-1">
+        <div
+          class="sticky top-24 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800"
+        >
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Order Summary</h3>
+
+          <div class="space-y-4 mb-6 max-h-[400px] overflow-y-auto custom-scrollbar">
+            <div *ngFor="let item of cartItems()" class="flex gap-4">
+              <div
+                class="w-16 h-16 rounded-lg bg-gray-50 dark:bg-gray-800 p-2 border border-gray-100 dark:border-gray-700 shrink-0"
+              >
+                <img
+                  [src]="item.product.image"
+                  [alt]="item.product.title"
+                  class="w-full h-full object-contain"
+                  (error)="handleImageError($event)"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {{ item.product.title }}
+                </h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Qty: {{ item.quantity }}</p>
+                <p class="text-sm font-bold text-primary mt-1">
+                  {{ item.product.price | currency }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-6 border-t border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>Subtotal</span>
+              <span>{{ cartTotal() | currency }}</span>
+            </div>
+            <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>Shipping</span>
+              <span class="text-green-500">Free</span>
+            </div>
+            <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>Tax (Estimated)</span>
+              <span>{{ cartTotal() * 0.1 | currency }}</span>
+            </div>
+            <div
+              class="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-4 border-t border-gray-100 dark:border-gray-800"
+            >
+              <span>Total</span>
+              <span>{{ cartTotal() * 1.1 | currency }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div
+  *ngIf="showSuccessModal"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+>
+  <div
+    class="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-in zoom-in-95 duration-300 border border-gray-100 dark:border-gray-800"
+  >
+    <div
+      class="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
+    >
+      <lucide-icon
+        [img]="Check"
+        class="text-green-600 dark:text-green-400"
+        [size]="40"
+      ></lucide-icon>
+    </div>
+
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      Order Placed Successfully!
+    </h2>
+    <p class="text-gray-600 dark:text-gray-400 mb-8">
+      Thank you for your purchase. Your order has been received and is being processed.
+    </p>
+
+    <button
+      (click)="goToDashboard()"
+      class="w-full py-3.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/30 active:scale-95"
+    >
+      Go to Dashboard
+    </button>
+  </div>
+</div>

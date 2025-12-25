@@ -1,0 +1,285 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Back Button -->
+    <a
+      routerLink="/products"
+      class="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors mb-8 group bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 w-fit"
+    >
+      <lucide-icon
+        [img]="ArrowLeft"
+        [size]="20"
+        class="group-hover:-translate-x-1 transition-transform"
+      ></lucide-icon>
+      <span class="font-medium">Back to Products</span>
+    </a>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading(); else content" class="animate-pulse">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div class="bg-slate-200 dark:bg-slate-800 rounded-3xl h-[500px]"></div>
+        <div class="space-y-6">
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/4"></div>
+          <div class="h-10 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
+          <div class="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+          <div class="h-32 bg-slate-200 dark:bg-slate-800 rounded"></div>
+          <div class="h-12 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
+        </div>
+      </div>
+    </div>
+
+    <app-size-guide
+      *ngIf="showSizeGuide()"
+      (close)="showSizeGuide.set(false)"
+      [category]="product()?.category || 'clothing'"
+    ></app-size-guide>
+
+    <ng-template #content>
+      <div *ngIf="product() as p">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 animate-in fade-in slide-in-from-bottom-8 duration-700"
+        >
+          <!-- Image Gallery -->
+          <div class="space-y-6">
+            <div
+              class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-slate-200 dark:border-slate-800 relative overflow-hidden group shadow-lg"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-gray-50 to-white dark:from-slate-800 dark:to-slate-700 opacity-50"
+              ></div>
+              <img
+                [src]="activeImage()"
+                [alt]="p.title"
+                class="w-full h-[500px] object-contain relative z-10 transition-transform duration-700 group-hover:scale-110 mix-blend-multiply dark:mix-blend-normal"
+              />
+            </div>
+            <!-- Thumbnails (Mock since API has 1 image) -->
+            <div class="flex gap-4 overflow-x-auto pb-2">
+              <button
+                class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-3 border-2 border-primary cursor-pointer shadow-sm hover:shadow-md transition-all scale-105"
+              >
+                <img [src]="p.image" class="w-full h-full object-contain" (error)="handleImageError($event)" />
+              </button>
+              <button
+                *ngFor="let i of [1, 2, 3]"
+                class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-3 border-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer opacity-50 hover:opacity-100 transition-all grayscale hover:grayscale-0"
+              >
+                <img [src]="p.image" class="w-full h-full object-contain" (error)="handleImageError($event)" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="lg:py-8">
+            <div class="mb-8">
+              <div class="flex items-center gap-3 mb-4">
+                <span
+                  class="text-xs font-bold text-primary dark:text-primary-light uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full border border-primary/20"
+                >
+                  {{ p.category }}
+                </span>
+                <div
+                  *ngIf="p.rating.rate > 4.5"
+                  class="flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-full border border-amber-200 dark:border-amber-800"
+                >
+                  <lucide-icon [img]="Star" [size]="12" class="fill-current"></lucide-icon>
+                  <span>BESTSELLER</span>
+                </div>
+              </div>
+
+              <h1
+                class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight"
+              >
+                {{ p.title }}
+              </h1>
+
+              <div class="flex items-center gap-6 mb-8">
+                <div class="flex items-center gap-2">
+                  <div class="flex text-amber-400">
+                    <lucide-icon
+                      *ngFor="let i of [1, 2, 3, 4, 5]"
+                      [img]="Star"
+                      [size]="20"
+                      [class.fill-current]="i <= p.rating.rate"
+                      [class.text-slate-300]="i > p.rating.rate"
+                      [class.dark:text-slate-600]="i > p.rating.rate"
+                    ></lucide-icon>
+                  </div>
+                  <span class="font-bold text-slate-700 dark:text-slate-200 ml-1">{{
+                    p.rating.rate
+                  }}</span>
+                </div>
+                <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+                <span
+                  class="text-slate-500 dark:text-slate-400 font-medium hover:text-primary cursor-pointer transition-colors"
+                  >{{ p.rating.count }} verified reviews</span
+                >
+              </div>
+
+              <div class="flex items-end gap-4 mb-8">
+                <p class="text-5xl font-bold text-slate-900 dark:text-white">
+                  {{ p.price | currency }}
+                </p>
+                <p *ngIf="p.price > 100" class="text-xl text-slate-400 line-through mb-2">
+                  {{ p.price * 1.2 | currency }}
+                </p>
+              </div>
+
+              <div
+                class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                {{ p.description }}
+              </div>
+
+              <!-- Actions -->
+              <div
+                class="flex flex-col sm:flex-row gap-4 mb-10 p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm"
+              >
+                <!-- Quantity -->
+                <div
+                  class="flex items-center justify-between bg-slate-100 dark:bg-slate-800 rounded-2xl p-2 sm:w-fit"
+                >
+                  <button
+                    (click)="updateQuantity(-1)"
+                    [disabled]="quantity() <= 1"
+                    class="p-3 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:shadow-none"
+                  >
+                    <lucide-icon [img]="Minus" [size]="20"></lucide-icon>
+                  </button>
+                  <span class="w-16 text-center font-bold text-xl text-slate-900 dark:text-white">{{
+                    quantity()
+                  }}</span>
+                  <button
+                    (click)="updateQuantity(1)"
+                    class="p-3 hover:bg-white dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm"
+                  >
+                    <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+                  </button>
+                </div>
+
+                <!-- Add to Cart -->
+                <button
+                  (click)="addToCart()"
+                  class="flex-1 flex items-center justify-center gap-3 bg-slate-900 dark:bg-white hover:bg-primary dark:hover:bg-primary text-white dark:text-slate-900 hover:text-white dark:hover:text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-slate-900/20 active:scale-95 group"
+                >
+                  <lucide-icon
+                    [img]="ShoppingCart"
+                    [size]="24"
+                    class="group-hover:animate-bounce"
+                  ></lucide-icon>
+                  Add to Cart
+                </button>
+
+                <!-- Wishlist -->
+                <button
+                  (click)="toggleWishlist()"
+                  class="p-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl hover:border-red-500 hover:text-red-500 text-slate-400 transition-all shadow-sm hover:shadow-md"
+                  [class.text-red-500]="isInWishlist()"
+                  [class.border-red-500]="isInWishlist()"
+                >
+                  <lucide-icon
+                    [img]="Heart"
+                    [size]="28"
+                    [class.fill-current]="isInWishlist()"
+                  ></lucide-icon>
+                </button>
+
+                <!-- Compare -->
+                <button
+                  (click)="toggleCompare()"
+                  class="p-4 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl hover:border-purple-500 hover:text-purple-500 text-slate-400 transition-all shadow-sm hover:shadow-md"
+                  [class.text-purple-500]="isInCompare()"
+                  [class.border-purple-500]="isInCompare()"
+                  title="Compare"
+                >
+                  <lucide-icon [img]="BarChart2" [size]="28"></lucide-icon>
+                </button>
+              </div>
+
+              <!-- Trust Badges -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div
+                  class="flex items-center gap-4 p-4 rounded-2xl bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700"
+                >
+                  <div class="p-3 bg-white dark:bg-slate-800 rounded-full text-blue-600 shadow-sm">
+                    <lucide-icon [img]="Truck" [size]="24"></lucide-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">Free Delivery</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">On orders over $100</p>
+                  </div>
+                </div>
+                <div
+                  class="flex items-center gap-4 p-4 rounded-2xl bg-purple-50/50 dark:bg-slate-800/50 border border-purple-100 dark:border-slate-700"
+                >
+                  <div
+                    class="p-3 bg-white dark:bg-slate-800 rounded-full text-purple-600 shadow-sm"
+                  >
+                    <lucide-icon [img]="ShieldCheck" [size]="24"></lucide-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">
+                      2 Year Warranty
+                    </h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Full protection</p>
+                  </div>
+                </div>
+                <div
+                  class="flex items-center gap-4 p-4 rounded-2xl bg-green-50/50 dark:bg-slate-800/50 border border-green-100 dark:border-slate-700"
+                >
+                  <div class="p-3 bg-white dark:bg-slate-800 rounded-full text-green-600 shadow-sm">
+                    <lucide-icon [img]="RefreshCw" [size]="24"></lucide-icon>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-sm">30 Days Return</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">No questions asked</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mb-16 border-t border-slate-200 dark:border-slate-800 pt-16">
+          <app-product-reviews [productId]="p.id"></app-product-reviews>
+        </div>
+
+        <!-- Related Products -->
+        <div
+          *ngIf="relatedProducts().length > 0"
+          class="mb-16 border-t border-slate-200 dark:border-slate-800 pt-16"
+        >
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Related Products</h2>
+            <a routerLink="/products" class="text-primary font-medium hover:underline">View All</a>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <app-product-card
+              *ngFor="let product of relatedProducts()"
+              [product]="product"
+              class="h-full"
+            ></app-product-card>
+          </div>
+        </div>
+
+        <!-- Recently Viewed -->
+        <div
+          *ngIf="recentlyViewed().length > 0"
+          class="mb-16 border-t border-slate-200 dark:border-slate-800 pt-16"
+        >
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Recently Viewed</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <app-product-card
+              *ngFor="let product of recentlyViewed()"
+              [product]="product"
+              class="h-full"
+            ></app-product-card>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>

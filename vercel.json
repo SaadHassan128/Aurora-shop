@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "framework": "angular",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/aurora-e-shop",
+  "installCommand": "npm install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

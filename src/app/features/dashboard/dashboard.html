@@ -1,0 +1,548 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 pt-20 pb-12 transition-colors duration-300">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 sticky top-24"
+        >
+          <!-- Profile Summary -->
+          <div
+            class="flex flex-col items-center mb-8 pb-8 border-b border-gray-100 dark:border-gray-800"
+          >
+            <div
+              class="w-24 h-24 rounded-full bg-gradient-to-tr from-primary to-purple-500 p-1 mb-4 relative group cursor-pointer"
+              (click)="setActiveTab('settings')"
+            >
+              <div
+                class="w-full h-full rounded-full bg-white dark:bg-slate-900 flex items-center justify-center overflow-hidden"
+              >
+                <img
+                  *ngIf="user()?.photoUrl"
+                  [src]="user()?.photoUrl"
+                  class="w-full h-full object-cover"
+                  alt="Profile"
+                />
+                <lucide-icon
+                  *ngIf="!user()?.photoUrl"
+                  [img]="User"
+                  [size]="40"
+                  class="text-gray-400"
+                ></lucide-icon>
+                <!-- Welcome Modal -->
+                <div
+                  *ngIf="showWelcomeModal"
+                  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+                >
+                  <div
+                    class="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-in zoom-in-95 duration-300 border border-gray-100 dark:border-gray-800"
+                  >
+                    <div
+                      class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6"
+                    >
+                      <lucide-icon [img]="User" class="text-primary" [size]="40"></lucide-icon>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      Welcome to Aurora!
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8">
+                      Your account has been created successfully. Let's complete your profile to get
+                      the best experience.
+                    </p>
+
+                    <div class="space-y-3">
+                      <button
+                        (click)="completeProfile()"
+                        class="w-full py-3.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/30 active:scale-95"
+                      >
+                        Complete Profile
+                      </button>
+                      <button
+                        (click)="closeWelcomeModal()"
+                        class="w-full py-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white font-medium transition-colors"
+                      >
+                        Skip for now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Explore Modal -->
+                <div
+                  *ngIf="showExploreModal"
+                  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+                >
+                  <div
+                    class="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-in zoom-in-95 duration-300 border border-gray-100 dark:border-gray-800"
+                  >
+                    <div
+                      class="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
+                    >
+                      <lucide-icon
+                        [img]="ShoppingBag"
+                        class="text-purple-600 dark:text-purple-400"
+                        [size]="40"
+                      ></lucide-icon>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      You're All Set!
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8">
+                      Your profile has been updated. Now you're ready to explore our exclusive
+                      collection of premium products.
+                    </p>
+
+                    <div class="space-y-3">
+                      <button
+                        (click)="exploreProducts()"
+                        class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-primary text-white rounded-xl font-bold hover:from-purple-700 hover:to-primary-dark transition-all shadow-lg shadow-primary/30 active:scale-95"
+                      >
+                        Explore Collection
+                      </button>
+                      <button
+                        (click)="closeExploreModal()"
+                        class="w-full py-3.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white font-medium transition-colors"
+                      >
+                        Stay Here
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hover Overlay for Edit -->
+              <div
+                class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <lucide-icon [img]="Settings" class="text-white" [size]="24"></lucide-icon>
+              </div>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+              {{ user()?.name?.firstname | titlecase }} {{ user()?.name?.lastname | titlecase }}
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ user()?.email }}</p>
+          </div>
+
+          <!-- Navigation -->
+          <nav class="space-y-2">
+            <button
+              (click)="setActiveTab('overview')"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+              [class.bg-primary]="activeTab() === 'overview'"
+              [class.text-white]="activeTab() === 'overview'"
+              [class.text-gray-600]="activeTab() !== 'overview'"
+              [class.dark:text-gray-400]="activeTab() !== 'overview'"
+              [class.hover:bg-gray-50]="activeTab() !== 'overview'"
+              [class.dark:hover:bg-gray-800]="activeTab() !== 'overview'"
+            >
+              <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
+              Overview
+            </button>
+            <button
+              (click)="setActiveTab('orders')"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+              [class.bg-primary]="activeTab() === 'orders'"
+              [class.text-white]="activeTab() === 'orders'"
+              [class.text-gray-600]="activeTab() !== 'orders'"
+              [class.dark:text-gray-400]="activeTab() !== 'orders'"
+              [class.hover:bg-gray-50]="activeTab() !== 'orders'"
+              [class.dark:hover:bg-gray-800]="activeTab() !== 'orders'"
+            >
+              <lucide-icon [img]="Package" [size]="20"></lucide-icon>
+              Orders
+            </button>
+            <button
+              (click)="setActiveTab('wishlist')"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+              [class.bg-primary]="activeTab() === 'wishlist'"
+              [class.text-white]="activeTab() === 'wishlist'"
+              [class.text-gray-600]="activeTab() !== 'wishlist'"
+              [class.dark:text-gray-400]="activeTab() !== 'wishlist'"
+              [class.hover:bg-gray-50]="activeTab() !== 'wishlist'"
+              [class.dark:hover:bg-gray-800]="activeTab() !== 'wishlist'"
+            >
+              <lucide-icon [img]="Heart" [size]="20"></lucide-icon>
+              Wishlist
+            </button>
+            <button
+              (click)="setActiveTab('settings')"
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium"
+              [class.bg-primary]="activeTab() === 'settings'"
+              [class.text-white]="activeTab() === 'settings'"
+              [class.text-gray-600]="activeTab() !== 'settings'"
+              [class.dark:text-gray-400]="activeTab() !== 'settings'"
+              [class.hover:bg-gray-50]="activeTab() !== 'settings'"
+              [class.dark:hover:bg-gray-800]="activeTab() !== 'settings'"
+            >
+              <lucide-icon [img]="Settings" [size]="20"></lucide-icon>
+              Settings
+            </button>
+
+            <div class="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+              <button
+                (click)="logout()"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+              >
+                <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
+                Sign Out
+              </button>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="lg:col-span-3">
+        <!-- Overview Tab -->
+        <div
+          *ngIf="activeTab() === 'overview'"
+          class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+        >
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              *ngFor="let stat of stats"
+              class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 transition-transform hover:scale-105"
+            >
+              <div [class]="'p-4 rounded-xl ' + stat.bg + ' ' + stat.color">
+                <lucide-icon [img]="stat.icon" [size]="24"></lucide-icon>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ stat.label }}</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stat.value }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity / Orders Preview -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800"
+          >
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Orders</h2>
+              <button
+                (click)="setActiveTab('orders')"
+                class="text-primary hover:underline text-sm font-medium"
+              >
+                View All
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr
+                    class="text-left text-sm text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800"
+                  >
+                    <th class="pb-4 font-medium">Order ID</th>
+                    <th class="pb-4 font-medium">Date</th>
+                    <th class="pb-4 font-medium">Items</th>
+                    <th class="pb-4 font-medium">Status</th>
+                    <th class="pb-4 font-medium text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                  <tr *ngFor="let order of orders()" class="group">
+                    <td class="py-4 text-sm font-medium text-gray-900 dark:text-white">
+                      {{ order.id }}
+                    </td>
+                    <td class="py-4 text-sm text-gray-500 dark:text-gray-400">{{ order.date }}</td>
+                    <td class="py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {{ order.items.length }} items
+                    </td>
+                    <td class="py-4">
+                      <span
+                        [class]="
+                          'px-3 py-1 rounded-full text-xs font-bold ' + getStatusColor(order.status)
+                        "
+                      >
+                        {{ order.status }}
+                      </span>
+                    </td>
+                    <td class="py-4 text-sm font-bold text-gray-900 dark:text-white text-right">
+                      {{ order.total | currency }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div
+          *ngIf="activeTab() === 'orders'"
+          class="animate-in fade-in slide-in-from-bottom-4 duration-500"
+        >
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">My Orders</h1>
+
+          <div *ngIf="orders().length > 0" class="space-y-4">
+            <div
+              *ngFor="let order of orders()"
+              class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-all hover:shadow-md"
+            >
+              <div
+                class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-gray-100 dark:border-gray-800"
+              >
+                <div>
+                  <div class="flex items-center gap-3">
+                    <h3 class="font-bold text-gray-900 dark:text-white text-lg">
+                      Order #{{ order.id }}
+                    </h3>
+                    <span
+                      [class]="
+                        'px-3 py-1 rounded-full text-xs font-bold ' + getStatusColor(order.status)
+                      "
+                    >
+                      {{ order.status }}
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    Placed on {{ order.date | date : 'medium' }}
+                  </p>
+                </div>
+                <div class="text-right">
+                  <p class="text-2xl font-bold text-primary">{{ order.total | currency }}</p>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Items:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400">
+                  <li *ngFor="let item of order.items">
+                    {{ item.product.title }} (x{{ item.quantity }})
+                  </li>
+                </ul>
+              </div>
+              <div class="mt-6 flex gap-3">
+                <button
+                  class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                >
+                  View Details
+                </button>
+                <button
+                  class="px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-lg text-sm font-medium hover:text-primary hover:border-primary transition-colors"
+                >
+                  Download Invoice
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            *ngIf="orders().length === 0"
+            class="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-gray-800"
+          >
+            <lucide-icon
+              [img]="Package"
+              [size]="48"
+              class="mx-auto text-gray-300 dark:text-gray-600 mb-4"
+            ></lucide-icon>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">No orders found</h3>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">You haven't placed any orders yet.</p>
+            <button
+              routerLink="/products"
+              class="mt-6 px-6 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors"
+            >
+              Browse Products
+            </button>
+          </div>
+        </div>
+
+        <!-- Wishlist Tab -->
+        <div
+          *ngIf="activeTab() === 'wishlist'"
+          class="animate-in fade-in slide-in-from-bottom-4 duration-500"
+        >
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">My Wishlist</h1>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <app-product-card
+              *ngFor="let product of wishlistItems()"
+              [product]="product"
+              class="h-full"
+            ></app-product-card>
+          </div>
+          <div
+            *ngIf="wishlistItems().length === 0"
+            class="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-gray-800"
+          >
+            <lucide-icon
+              [img]="Heart"
+              [size]="48"
+              class="mx-auto text-gray-300 dark:text-gray-600 mb-4"
+            ></lucide-icon>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Your wishlist is empty</h3>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Start adding items you love!</p>
+            <button
+              class="mt-6 px-6 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-colors"
+            >
+              Browse Products
+            </button>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div
+          *ngIf="activeTab() === 'settings'"
+          class="animate-in fade-in slide-in-from-bottom-4 duration-500"
+        >
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Account Settings</h1>
+          <div
+            class="bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 max-w-2xl"
+          >
+            <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" class="space-y-6">
+              <!-- Profile Picture Upload -->
+              <div class="flex flex-col items-center mb-8">
+                <div class="relative group cursor-pointer" (click)="fileInput.click()">
+                  <div
+                    class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 border-4 border-white dark:border-slate-900 shadow-lg"
+                  >
+                    <img
+                      *ngIf="previewUrl()"
+                      [src]="previewUrl()"
+                      class="w-full h-full object-cover"
+                      alt="Profile"
+                      (error)="handleProfileImageError($event)"
+                    />
+                    <div
+                      *ngIf="!previewUrl()"
+                      class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500"
+                    >
+                      <lucide-icon [img]="User" [size]="48"></lucide-icon>
+                    </div>
+                  </div>
+                  <div
+                    class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  >
+                    <lucide-icon [img]="Camera" class="text-white" [size]="32"></lucide-icon>
+                  </div>
+                  <div
+                    class="absolute bottom-0 right-0 p-2 bg-primary rounded-full shadow-lg border-2 border-white dark:border-slate-900"
+                  >
+                    <lucide-icon [img]="Camera" class="text-white" [size]="16"></lucide-icon>
+                  </div>
+                </div>
+
+                <!-- Upload Button -->
+                <button
+                  type="button"
+                  (click)="fileInput.click()"
+                  class="mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
+                >
+                  <lucide-icon [img]="Camera" [size]="16"></lucide-icon>
+                  Upload New Picture
+                </button>
+
+                <input
+                  #fileInput
+                  type="file"
+                  class="hidden"
+                  accept="image/*"
+                  (change)="onFileSelected($event)"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >First Name</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="firstName"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >Last Name</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="lastName"
+                    placeholder="Last Name"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >Email Address</label
+                >
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div
+                class="pt-6 border-t border-gray-100 dark:border-gray-800"
+                formGroupName="address"
+              >
+                <h3 class="font-bold text-gray-900 dark:text-white mb-4">Address</h3>
+                <div class="space-y-4">
+                  <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >Street</label
+                    >
+                    <input
+                      type="text"
+                      formControlName="street"
+                      class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >City</label
+                      >
+                      <select
+                        formControlName="city"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      >
+                        <option value="">Select City</option>
+                        <option *ngFor="let city of egyptCities" [value]="city">{{ city }}</option>
+                      </select>
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                        >Zip Code</label
+                      >
+                      <input
+                        type="text"
+                        formControlName="zipcode"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end pt-4">
+                <button
+                  type="submit"
+                  class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,372 @@
+<div
+  class="min-h-screen pt-24 pb-12 flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
+>
+  <!-- Background Elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div
+      class="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 animate-blob"
+    ></div>
+    <div
+      class="absolute top-1/2 left-1/2 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 animate-blob animation-delay-2000"
+    ></div>
+    <div
+      class="absolute -bottom-24 -right-24 w-96 h-96 bg-accent/20 rounded-full blur-3xl opacity-30 animate-blob animation-delay-4000"
+    ></div>
+  </div>
+
+  <div class="max-w-md w-full space-y-8 relative z-10">
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+        Create an Account
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Join Aurora E-Shop today</p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="flex items-center justify-between relative mb-8">
+      <div
+        class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full -z-10"
+      ></div>
+      <div
+        class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-primary rounded-full -z-10 transition-all duration-300"
+        [style.width.%]="((currentStep() - 1) / (totalSteps - 1)) * 100"
+      ></div>
+
+      <!-- Step 1 -->
+      <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-900 px-2">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300"
+          [ngClass]="{
+            'border-primary bg-primary text-white': currentStep() >= 1,
+            'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400':
+              currentStep() < 1
+          }"
+        >
+          <lucide-icon *ngIf="currentStep() > 1" [img]="Check" [size]="16"></lucide-icon>
+          <span *ngIf="currentStep() <= 1">1</span>
+        </div>
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Personal</span>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-900 px-2">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300"
+          [ngClass]="{
+            'border-primary bg-primary text-white': currentStep() >= 2,
+            'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400':
+              currentStep() < 2
+          }"
+        >
+          <lucide-icon *ngIf="currentStep() > 2" [img]="Check" [size]="16"></lucide-icon>
+          <span *ngIf="currentStep() <= 2">2</span>
+        </div>
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Security</span>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex flex-col items-center gap-2 bg-gray-50 dark:bg-gray-900 px-2">
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300"
+          [ngClass]="{
+            'border-primary bg-primary text-white': currentStep() >= 3,
+            'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400':
+              currentStep() < 3
+          }"
+        >
+          <span *ngIf="currentStep() <= 3">3</span>
+        </div>
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Profile</span>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div
+      class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-white/20"
+    >
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Step 1: Personal Info -->
+        <div
+          *ngIf="currentStep() === 1"
+          formGroupName="personal"
+          class="space-y-4 animate-in slide-in-from-right duration-300"
+        >
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <lucide-icon [img]="User" [size]="18" class="text-gray-400"></lucide-icon>
+                </div>
+                <input
+                  type="text"
+                  formControlName="firstName"
+                  class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="First Name"
+                  [class.border-red-500]="
+                    personal.get('firstName')?.invalid && personal.get('firstName')?.touched
+                  "
+                />
+              </div>
+              <p
+                *ngIf="personal.get('firstName')?.invalid && personal.get('firstName')?.touched"
+                class="text-xs text-red-500 mt-1"
+              >
+                First name is required (2-50 chars).
+              </p>
+            </div>
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <lucide-icon [img]="User" [size]="18" class="text-gray-400"></lucide-icon>
+                </div>
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  placeholder="Last Name"
+                  [class.border-red-500]="
+                    personal.get('lastName')?.invalid && personal.get('lastName')?.touched
+                  "
+                />
+              </div>
+              <p
+                *ngIf="personal.get('lastName')?.invalid && personal.get('lastName')?.touched"
+                class="text-xs text-red-500 mt-1"
+              >
+                Last name is required.
+              </p>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email Address</label
+            >
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <lucide-icon [img]="Mail" [size]="18" class="text-gray-400"></lucide-icon>
+              </div>
+              <input
+                type="email"
+                formControlName="email"
+                class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                placeholder="demo@example.com"
+                [class.border-red-500]="
+                  personal.get('email')?.invalid && personal.get('email')?.touched
+                "
+              />
+            </div>
+            <p
+              *ngIf="personal.get('email')?.invalid && personal.get('email')?.touched"
+              class="text-xs text-red-500 mt-1"
+            >
+              Please enter a valid email.
+            </p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <lucide-icon [img]="Phone" [size]="18" class="text-gray-400"></lucide-icon>
+              </div>
+              <input
+                type="tel"
+                formControlName="phone"
+                class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                placeholder="+1234567890"
+                [class.border-red-500]="
+                  personal.get('phone')?.invalid && personal.get('phone')?.touched
+                "
+              />
+            </div>
+            <p
+              *ngIf="personal.get('phone')?.invalid && personal.get('phone')?.touched"
+              class="text-xs text-red-500 mt-1"
+            >
+              Please enter a valid phone number.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2: Security -->
+        <div
+          *ngIf="currentStep() === 2"
+          formGroupName="security"
+          class="space-y-4 animate-in slide-in-from-right duration-300"
+        >
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <lucide-icon [img]="Lock" [size]="18" class="text-gray-400"></lucide-icon>
+              </div>
+              <input
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                placeholder="••••••••"
+                [class.border-red-500]="
+                  security.get('password')?.invalid && security.get('password')?.touched
+                "
+              />
+              <button
+                type="button"
+                (click)="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
+              >
+                <lucide-icon [img]="showPassword() ? EyeOff : Eye" [size]="18"></lucide-icon>
+              </button>
+            </div>
+
+            <!-- Strength Meter -->
+            <div class="mt-2 space-y-1" *ngIf="security.get('password')?.value">
+              <div class="flex justify-between text-xs text-gray-500">
+                <span>Strength</span>
+                <span [class.text-green-500]="getStrengthLabel() === 'Strong'">{{
+                  getStrengthLabel()
+                }}</span>
+              </div>
+              <div class="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  class="h-full transition-all duration-300"
+                  [ngClass]="getStrengthColor()"
+                  [style.width.%]="getPasswordStrength()"
+                ></div>
+              </div>
+            </div>
+            <p
+              *ngIf="security.get('password')?.invalid && security.get('password')?.touched"
+              class="text-xs text-red-500 mt-1"
+            >
+              Min 8 chars, uppercase, lowercase, number, special char.
+            </p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Confirm Password</label
+            >
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <lucide-icon [img]="Lock" [size]="18" class="text-gray-400"></lucide-icon>
+              </div>
+              <input
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                class="block w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                placeholder="••••••••"
+                [class.border-red-500]="security.errors?.['mismatch'] && security.get('confirmPassword')?.touched"
+              />
+              <button
+                type="button"
+                (click)="toggleConfirmPasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
+              >
+                <lucide-icon [img]="showConfirmPassword() ? EyeOff : Eye" [size]="18"></lucide-icon>
+              </button>
+            </div>
+            <p
+              *ngIf="security.errors?.['mismatch'] && security.get('confirmPassword')?.touched"
+              class="text-xs text-red-500 mt-1"
+            >
+              Passwords do not match.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3: Profile -->
+        <div
+          *ngIf="currentStep() === 3"
+          formGroupName="profile"
+          class="space-y-6 animate-in slide-in-from-right duration-300"
+        >
+          <div class="flex flex-col items-center justify-center space-y-4">
+            <div class="relative group cursor-pointer">
+              <div
+                class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 border-4 border-white dark:border-gray-800 shadow-lg"
+              >
+                <img
+                  *ngIf="profileImagePreview()"
+                  [src]="profileImagePreview()"
+                  class="w-full h-full object-cover"
+                  alt="Profile Preview"
+                />
+                <div
+                  *ngIf="!profileImagePreview()"
+                  class="w-full h-full flex items-center justify-center text-gray-400"
+                >
+                  <lucide-icon [img]="User" [size]="48"></lucide-icon>
+                </div>
+              </div>
+              <label
+                class="absolute inset-0 flex items-center justify-center bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity rounded-full cursor-pointer"
+              >
+                <lucide-icon [img]="Upload" [size]="24"></lucide-icon>
+                <input
+                  type="file"
+                  class="hidden"
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                />
+              </label>
+            </div>
+            <div class="text-center">
+              <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                Upload Profile Picture
+              </h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">JPG, PNG or GIF (Max 2MB)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div
+          class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700"
+        >
+          <button
+            type="button"
+            (click)="prevStep()"
+            [disabled]="currentStep() === 1"
+            class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+          >
+            <lucide-icon [img]="ChevronLeft" [size]="16"></lucide-icon> Back
+          </button>
+
+          <button
+            *ngIf="currentStep() < totalSteps"
+            type="button"
+            (click)="nextStep()"
+            class="px-6 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 active:scale-[0.98] flex items-center gap-2"
+          >
+            Next <lucide-icon [img]="ChevronRight" [size]="16"></lucide-icon>
+          </button>
+
+          <button
+            *ngIf="currentStep() === totalSteps"
+            type="submit"
+            [disabled]="registerForm.invalid || isLoading()"
+            class="px-6 py-2 bg-primary text-white rounded-xl font-medium hover:bg-primary-dark transition-all shadow-lg shadow-primary/25 active:scale-[0.98] flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <span *ngIf="!isLoading()">Create Account</span>
+            <span *ngIf="isLoading()">Creating...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Login Link -->
+    <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+      Already have an account?
+      <a
+        routerLink="/auth/login"
+        class="font-medium text-primary hover:text-primary-dark transition-colors"
+      >
+        Sign in
+      </a>
+    </p>
+  </div>
+</div>

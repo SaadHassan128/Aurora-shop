@@ -1,0 +1,162 @@
+<!-- Skeleton Loading State -->
+<div
+  *ngIf="isLoading || !product"
+  class="h-full bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-4 animate-pulse"
+>
+  <div class="w-full pt-[100%] bg-gray-200 dark:bg-gray-800 rounded-2xl mb-4"></div>
+  <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded-full w-3/4 mb-2"></div>
+  <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded-full w-1/2 mb-4"></div>
+  <div class="flex items-center justify-between mt-auto">
+    <div class="h-6 bg-gray-200 dark:bg-gray-800 rounded-full w-20"></div>
+    <div class="h-10 w-10 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
+  </div>
+</div>
+
+<!-- Product Content -->
+<div
+  *ngIf="!isLoading && product"
+  (click)="navigateToProduct()"
+  class="group relative h-full bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-2xl border border-white/50 dark:border-white/5 shadow-sm transition-all duration-500 overflow-hidden flex flex-col cursor-pointer"
+>
+  <!-- Image Container -->
+  <div
+    class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-slate-800 dark:to-slate-900/50 p-4"
+  >
+    <img
+      [src]="product.image"
+      [alt]="product.title"
+      class="absolute top-0 left-0 w-full h-full object-contain p-4 mix-blend-multiply dark:mix-blend-normal z-10 relative"
+      loading="lazy"
+      (error)="handleImageError($event)"
+    />
+
+    <!-- Badges -->
+    <div class="absolute top-4 left-4 flex flex-col gap-2 z-20">
+      <div
+        *ngIf="product.rating.rate > 4.5"
+        class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-white/20 dark:border-white/10 flex items-center gap-1 animate-in fade-in slide-in-from-left duration-500"
+      >
+        <span class="text-orange-500">★</span>
+        <span class="text-slate-700 dark:text-slate-200">Top Rated</span>
+      </div>
+      <div
+        *ngIf="product.price < 50"
+        class="bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-emerald-500/20 border border-white/20 animate-in fade-in slide-in-from-left duration-500 delay-100"
+      >
+        Best Value
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="absolute right-3 top-3 flex flex-col gap-2 z-20">
+      <button
+        (click)="onToggleWishlist($event)"
+        class="p-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-full hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all shadow-sm border border-gray-100 dark:border-gray-700"
+        [class.text-red-500]="isInWishlist(product)"
+        title="Add to Wishlist"
+      >
+        <lucide-icon
+          [img]="Heart"
+          [size]="18"
+          [class.fill-current]="isInWishlist(product)"
+        ></lucide-icon>
+      </button>
+
+      <a
+        [routerLink]="['/products', product.id]"
+        class="p-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-full hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400 transition-all shadow-sm border border-gray-100 dark:border-gray-700"
+        title="Quick View"
+      >
+        <lucide-icon [img]="Eye" [size]="18"></lucide-icon>
+      </a>
+
+      <button
+        (click)="onToggleCompare($event)"
+        class="p-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-full hover:bg-purple-50 hover:text-purple-500 dark:hover:bg-purple-900/30 dark:hover:text-purple-400 transition-all shadow-sm border border-gray-100 dark:border-gray-700"
+        [class.text-purple-500]="isInCompare(product)"
+        title="Compare"
+      >
+        <lucide-icon [img]="BarChart2" [size]="18"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div
+    class="p-3 flex flex-col flex-grow relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+  >
+    <!-- Category -->
+    <span
+      class="text-[10px] font-bold text-primary dark:text-primary-light uppercase tracking-widest mb-1 opacity-80"
+    >
+      {{ product.category }}
+    </span>
+
+    <!-- Title -->
+    <h3
+      class="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 mb-1.5 group-hover:text-primary transition-colors leading-tight"
+    >
+      <span class="outline-none">
+        {{ product.title }}
+      </span>
+    </h3>
+
+    <!-- Rating -->
+    <div class="flex items-center gap-1.5 mb-2">
+      <div class="flex items-center gap-0.5 text-amber-400">
+        <lucide-icon [img]="Star" [size]="12" class="fill-current"></lucide-icon>
+        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 ml-0.5">
+          {{ product.rating.rate }}
+        </span>
+      </div>
+      <span class="text-[10px] text-slate-400">({{ product.rating.count }})</span>
+    </div>
+
+    <!-- Price & Add to Cart -->
+    <div
+      class="mt-auto flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/50"
+    >
+      <div class="flex flex-col">
+        <span class="text-base font-bold text-slate-900 dark:text-white">
+          {{ product.price | currency }}
+        </span>
+      </div>
+
+      <button
+        (click)="onAddToCart($event)"
+        class="relative overflow-hidden group/btn flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:w-24 hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white transition-all duration-300 shadow-sm active:scale-95"
+        [class.w-24]="isAdded()"
+        [class.bg-green-500]="isAdded()"
+        [class.hover:bg-green-600]="isAdded()"
+        [class.text-white]="isAdded()"
+      >
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover/btn:opacity-0 group-hover/btn:-translate-y-full"
+          [class.opacity-0]="isAdded()"
+          [class.translate-y-full]="isAdded()"
+        >
+          <lucide-icon [img]="ShoppingCart" [size]="14"></lucide-icon>
+        </div>
+
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-0 group-hover/btn:opacity-100 translate-y-full group-hover/btn:translate-y-0"
+          [class.opacity-0]="isAdded()"
+        >
+          <span class="text-[10px] font-bold ml-1">Add</span>
+        </div>
+
+        <!-- Success State -->
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-all duration-300"
+          [class.opacity-100]="isAdded()"
+          [class.opacity-0]="!isAdded()"
+          [class.translate-y-0]="isAdded()"
+          [class.translate-y-full]="!isAdded()"
+        >
+          <lucide-icon [img]="Check" [size]="14"></lucide-icon>
+          <span class="text-[10px] font-bold ml-1">Added</span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Order Management</h2>
+    <div class="flex gap-2">
+      <input
+        type="text"
+        placeholder="Search orders..."
+        class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+      />
+
+      <app-dropdown
+        [options]="filterOptions"
+        [value]="currentFilter"
+        (valueChange)="filterOrders($event)"
+        placeholder="Filter by Status"
+        buttonClass="w-48 bg-primary text-white hover:bg-primary-dark"
+      ></app-dropdown>
+    </div>
+  </div>
+
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+  >
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
+          <tr>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Order ID
+            </th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Customer
+            </th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Date
+            </th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Total
+            </th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Status
+            </th>
+            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+          <tr
+            *ngFor="let order of orders()"
+            class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">#{{ order.id }}</td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300"
+                >
+                  {{ order.userName.charAt(0) }}
+                </div>
+                <span class="text-sm text-gray-700 dark:text-gray-300">{{ order.userName }}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ order.date | date }}</td>
+            <td class="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
+              {{ order.total | currency }}
+            </td>
+            <td class="px-6 py-4">
+              <span
+                [ngClass]="getStatusColor(order.status)"
+                class="px-2 py-1 text-xs font-semibold rounded-full capitalize"
+              >
+                {{ order.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <app-dropdown
+                [options]="statusOptions"
+                [value]="order.status"
+                (valueChange)="initiateStatusUpdate(order.id, $event)"
+                placeholder="Actions"
+                buttonClass="bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm py-1.5 px-3"
+              ></app-dropdown>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-modal
+    *ngIf="isModalOpen()"
+    [type]="modalType()"
+    [title]="modalTitle()"
+    [message]="modalMessage()"
+    (onConfirm)="confirmModal()"
+    (onCancel)="closeModal()"
+  ></app-modal>
+</div>

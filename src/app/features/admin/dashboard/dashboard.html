@@ -1,0 +1,137 @@
+<div class="space-y-6">
+  <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Dashboard Overview</h2>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Revenue</h3>
+        <div
+          class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400"
+        >
+          <lucide-icon [img]="DollarSign" [size]="20"></lucide-icon>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-gray-900 dark:text-white">
+        {{ stats()?.totalRevenue | currency }}
+      </p>
+      <span class="text-sm text-green-500 flex items-center gap-1 mt-2">
+        <lucide-icon [img]="TrendingUp" [size]="14"></lucide-icon> +12.5% from last month
+      </span>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Orders</h3>
+        <div
+          class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"
+        >
+          <lucide-icon [img]="ShoppingBag" [size]="20"></lucide-icon>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats()?.totalOrders }}</p>
+      <span class="text-sm text-blue-500 flex items-center gap-1 mt-2">
+        <lucide-icon [img]="TrendingUp" [size]="14"></lucide-icon> +5.2% from last month
+      </span>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Pending Orders</h3>
+        <div
+          class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg text-yellow-600 dark:text-yellow-400"
+        >
+          <lucide-icon [img]="Clock" [size]="20"></lucide-icon>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats()?.pendingOrders }}</p>
+      <span class="text-sm text-gray-500 mt-2 block">Requires attention</span>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Delivered</h3>
+        <div
+          class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"
+        >
+          <lucide-icon [img]="PackageCheck" [size]="20"></lucide-icon>
+        </div>
+      </div>
+      <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats()?.deliveredOrders }}</p>
+      <span class="text-sm text-gray-500 mt-2 block">Successfully completed</span>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Revenue Analytics</h3>
+      <div class="h-64">
+        <canvas baseChart [data]="revenueChartData" [options]="chartOptions" [type]="'line'">
+        </canvas>
+      </div>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
+        Order Status Distribution
+      </h3>
+      <div class="h-64">
+        <canvas
+          baseChart
+          [data]="orderStatusChartData"
+          [options]="pieChartOptions"
+          [type]="'doughnut'"
+        >
+        </canvas>
+      </div>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Orders by Category</h3>
+      <div class="h-64">
+        <canvas baseChart [data]="categoryChartData" [options]="chartOptions" [type]="'line'">
+        </canvas>
+      </div>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">User Growth</h3>
+      <div class="h-64">
+        <canvas baseChart [data]="userGrowthChartData" [options]="chartOptions" [type]="'line'">
+        </canvas>
+      </div>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Wishlist by Category</h3>
+      <div class="h-64">
+        <canvas
+          baseChart
+          [data]="wishlistChartData"
+          [options]="pieChartOptions"
+          [type]="'doughnut'"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

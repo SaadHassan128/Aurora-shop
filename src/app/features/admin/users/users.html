@@ -1,0 +1,70 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">User Management</h2>
+    <div class="flex gap-2">
+      <input
+        type="text"
+        placeholder="Search users..."
+        class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+      />
+      <button
+        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+      >
+        <lucide-icon [img]="Filter" [size]="20"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      *ngFor="let user of users()"
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center text-center"
+    >
+      <div
+        class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-3xl font-bold text-gray-500 dark:text-gray-400 mb-4"
+      >
+        {{ user.name.firstname.charAt(0) }}{{ user.name.lastname.charAt(0) }}
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+        {{ user.name.firstname }} {{ user.name.lastname }}
+      </h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-2">{{ user.email }}</p>
+      <span
+        class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded-full text-xs font-semibold uppercase mb-4"
+      >
+        {{ user.role || 'User' }}
+      </span>
+
+      <div class="w-full border-t border-gray-100 dark:border-gray-700 pt-4 mt-auto">
+        <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+          <span>Phone</span>
+          <span class="font-medium text-gray-900 dark:text-white">{{ user.phone }}</span>
+        </div>
+        <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <span>City</span>
+          <span class="font-medium text-gray-900 dark:text-white">{{ user.address.city }}</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 w-full mt-6">
+        <button
+          (click)="viewProfile(user)"
+          class="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        >
+          View Profile
+        </button>
+        <button
+          class="px-4 py-2 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+        >
+          <lucide-icon [img]="Trash2" [size]="20"></lucide-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <app-user-profile-modal
+    *ngIf="selectedUser()"
+    [user]="selectedUser()!"
+    (closeEvent)="closeProfile()"
+  ></app-user-profile-modal>
+</div>

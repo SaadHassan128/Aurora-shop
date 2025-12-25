@@ -1,0 +1,72 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Product Management</h2>
+    <div class="flex gap-2">
+      <input
+        type="text"
+        placeholder="Search products..."
+        class="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+      />
+      <button
+        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
+      >
+        <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+        Add Product
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div
+      *ngFor="let product of products()"
+      class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden group"
+    >
+      <div class="relative aspect-square overflow-hidden bg-white p-4">
+        <img
+          [src]="product.image"
+          [alt]="product.title"
+          class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+        />
+        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            (click)="editProduct(product)"
+            class="p-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur shadow-lg rounded-full text-primary hover:text-primary-dark transition-colors"
+          >
+            <lucide-icon [img]="Edit2" [size]="18"></lucide-icon>
+          </button>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="text-xs text-primary font-medium mb-1 uppercase tracking-wide">
+          {{ product.category }}
+        </div>
+        <h3
+          class="font-bold text-gray-900 dark:text-white mb-2 line-clamp-1"
+          [title]="product.title"
+        >
+          {{ product.title }}
+        </h3>
+        <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-4">
+          {{ product.description }}
+        </p>
+        <div class="flex items-center justify-between">
+          <span class="text-lg font-bold text-gray-900 dark:text-white">{{
+            product.price | currency
+          }}</span>
+          <div class="flex items-center gap-1 text-yellow-500 text-sm">
+            <lucide-icon [img]="Star" [size]="14" class="fill-current"></lucide-icon>
+            <span>{{ product.rating.rate }}</span>
+            <span class="text-gray-400">({{ product.rating.count }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-product-edit-modal
+    *ngIf="selectedProduct()"
+    [product]="selectedProduct()!"
+    (closeEvent)="closeEditModal()"
+    (saveEvent)="saveProduct($event)"
+  ></app-product-edit-modal>
+</div>
