@@ -1,0 +1,18 @@
+# Tell GitHub to classify this as a TypeScript project
+*.ts linguist-detectable=true
+*.html linguist-documentation
+
+# Mark template files as generated/vendored to reduce their weight in language stats
+src/**/*.html linguist-vendored=false
+src/**/*.html linguist-generated=false
+
+# Ensure TypeScript is properly detected
+*.ts linguist-language=TypeScript
+
+# Don't count certain files in language statistics
+*.scss linguist-vendored=false
+*.css linguist-vendored=false
+*.json linguist-vendored=false
+
+# Mark documentation
+*.md linguist-documentation
