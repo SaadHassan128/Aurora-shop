@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +24,8 @@ import { ComparisonService } from '../../../core/services/comparison.service';
 @Component({
     selector: 'app-header',
     imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule, FormsModule],
-    templateUrl: './header.html'
+    templateUrl: './header.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
   themeService = inject(ThemeService);

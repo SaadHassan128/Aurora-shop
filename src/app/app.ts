@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -6,7 +6,8 @@ import { RouterOutlet } from '@angular/router';
     templateUrl: './app.html',
     styleUrl: './app.css',
     standalone: true,
-    imports: [RouterOutlet]
+    imports: [RouterOutlet],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
   title = 'aurora-e-shop';

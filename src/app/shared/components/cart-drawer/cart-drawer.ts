@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +18,8 @@ import {
     selector: 'app-cart-drawer',
     imports: [CommonModule, RouterLink, LucideAngularModule, FormsModule],
     templateUrl: './cart-drawer.html',
-    styleUrls: ['./cart-drawer.css']
+    styleUrls: ['./cart-drawer.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CartDrawerComponent {
   cartService = inject(CartService);

@@ -1,21 +1,41 @@
 {
   "version": 2,
   "framework": "angular",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/aurora-e-shop/browser"
-      }
-    }
-  ],
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
-  "buildCommand": "ng build",
+  "outputDirectory": "dist/aurora-e-shop/browser",
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

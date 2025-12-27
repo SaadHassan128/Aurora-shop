@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, PLATFORM_ID, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -41,7 +41,8 @@ import {
         animation: scale-slow 20s linear infinite alternate;
       }
     `,
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit, OnDestroy {
   api = inject(ApiService);
@@ -71,8 +72,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Flash sale products (using different limit/sort to vary)
   flashSaleProducts = toSignal(this.api.get<Product[]>('/products?limit=4&sort=desc'));
 
-  // Countdown timer logic
-  timeLeft = { hours: 10, minutes: 45, seconds: 30 };
+  // Countdown timer logic - using signal for better performance with OnPush
+  timeLeft = signal({ hours: 10, minutes: 45, seconds: 30 });
   private timerInterval: any;
 
   ngOnInit() {
@@ -88,20 +89,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   startTimer() {
     if (isPlatformBrowser(this.platformId)) {
       this.timerInterval = setInterval(() => {
-        if (this.timeLeft.seconds > 0) {
-          this.timeLeft.seconds--;
+        const current = this.timeLeft();
+        if (current.seconds > 0) {
+          this.timeLeft.set({ ...current, seconds: current.seconds - 1 });
         } else {
-          if (this.timeLeft.minutes > 0) {
-            this.timeLeft.minutes--;
-            this.timeLeft.seconds = 59;
+          if (current.minutes > 0) {
+            this.timeLeft.set({ ...current, minutes: current.minutes - 1, seconds: 59 });
           } else {
-            if (this.timeLeft.hours > 0) {
-              this.timeLeft.hours--;
-              this.timeLeft.minutes = 59;
-              this.timeLeft.seconds = 59;
+            if (current.hours > 0) {
+              this.timeLeft.set({ hours: current.hours - 1, minutes: 59, seconds: 59 });
             } else {
               // Reset timer for demo loop
-              this.timeLeft = { hours: 10, minutes: 45, seconds: 30 };
+              this.timeLeft.set({ hours: 10, minutes: 45, seconds: 30 });
             }
           }
         }
